@@ -39,15 +39,7 @@ final class TodayNotesPresenter: TodayNotesPresenting {
             guard let currentViewState = self.viewState else { return }
 
             let items = currentViewState.items.filterItemsByType(type: currentType)
-            
-            let newViewState = TodayNotesViewState(
-                headerTitle: viewState.headerTitle,
-                headerSubtitle: viewState.headerSubtitle,
-                headerButtonTitle: viewState.headerButtonTitle,
-                tabs: viewState.tabs,
-                currentType: currentType,
-                items: items
-            )
+            let newViewState = self.makeViewState(viewState: viewState, items: items)
             
             DispatchQueue.main.async {
                 self.view?.changeTab(for: index, viewState: newViewState)
@@ -70,18 +62,8 @@ final class TodayNotesPresenter: TodayNotesPresenting {
     
     //MARK: - INTERACTOR METODS
     func configure(with viewModel: TodayNotesViewModel) {
-        
         let items = mapItems(for: viewModel.items)
-        
-        
-        let viewState = TodayNotesViewState(
-            headerTitle: "Today's Task",
-            headerSubtitle: formatterSubTitle(date: .now),
-            headerButtonTitle: "+ New Task",
-            tabs: makeTabs(for: items),
-            currentType: .all,
-            items: items
-        )
+        let viewState = makeViewState(items: items)
         self.viewState = viewState
         view?.configure(with: viewState)
     }
@@ -91,16 +73,7 @@ final class TodayNotesPresenter: TodayNotesPresenting {
         guard let viewState else { return }
         
         let items = mapItems(for: items)
-        
-        var newViewState = TodayNotesViewState(
-            headerTitle: viewState.headerTitle,
-            headerSubtitle: viewState.headerSubtitle,
-            headerButtonTitle: viewState.headerButtonTitle,
-            tabs: makeTabs(for: items),
-            currentType: viewState.currentType,
-            items: items
-        )
-        
+        var newViewState = makeViewState(viewState: viewState, items: items)
         self.viewState = newViewState
         
         newViewState.items = newViewState.items.filterItemsByType(type: viewState.currentType)
@@ -139,6 +112,29 @@ final class TodayNotesPresenter: TodayNotesPresenting {
                 action: { [weak self] in
                     self?.changeCompletedTask(for: element.id)
                 }
+            )
+        }
+    }
+    
+    private func makeViewState(viewState: TodayNotesViewState? = nil, items: [TodayNotesCellViewState]) -> TodayNotesViewState {
+       
+        if let viewState {
+            return TodayNotesViewState(
+                headerTitle: viewState.headerTitle,
+                headerSubtitle: viewState.headerSubtitle,
+                headerButtonTitle: viewState.headerButtonTitle,
+                tabs: makeTabs(for: items),
+                currentType: viewState.currentType,
+                items: items
+            )
+        } else {
+            return TodayNotesViewState(
+                headerTitle: "Today's Task",
+                headerSubtitle: formatterSubTitle(date: .now),
+                headerButtonTitle: "+ New Task",
+                tabs: makeTabs(for: items),
+                currentType: .all,
+                items: items
             )
         }
     }

@@ -12,7 +12,7 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
     weak var presenter: TodayNotesPresenting?
     
     private let entity: TodayNotesEntityProtocol
-    private let storage = DataBaseEntity()
+    private let storage = DataBaseStorage()
     
     private var viewModel: TodayNotesViewModel?
     
@@ -49,10 +49,10 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
         var items = viewModel.items
         items[index] = modifyItem
         
-        storage.save(for: items) {
+        storage.save(for: items) { [weak self] in
             let newViewModel = TodayNotesViewModel(items: items)
-            self.viewModel = newViewModel
-            self.presenter?.updateInterface(with: items)
+            self?.viewModel = newViewModel
+            self?.presenter?.updateInterface(with: items)
         }
        
     }
@@ -72,10 +72,10 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
             at: 0
         )
         
-        storage.save(for: items) {
+        storage.save(for: items) { [weak self] in
             let newViewModel = TodayNotesViewModel(items: items)
-            self.viewModel = newViewModel
-            self.presenter?.updateInterface(with: items)
+            self?.viewModel = newViewModel
+            self?.presenter?.updateInterface(with: items)
         }
     }
     
@@ -100,10 +100,10 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
         var items = viewModel.items
         items[index] = modifyElement
 
-        storage.save(for: items) {
+        storage.save(for: items) { [weak self] in
             let newViewModel = TodayNotesViewModel(items: items)
-            self.viewModel = newViewModel
-            self.presenter?.updateInterface(with: items)
+            self?.viewModel = newViewModel
+            self?.presenter?.updateInterface(with: items)
         }
     }
     
@@ -114,10 +114,10 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
         var items = viewModel.items
         items.removeAll(where: { $0.id == id } )
         
-        storage.delete(for: id) {
+        storage.delete(for: id) { [weak self] in
             let newViewModel = TodayNotesViewModel(items: items)
-            self.viewModel = newViewModel
-            self.presenter?.updateInterface(with: items)
+            self?.viewModel = newViewModel
+            self?.presenter?.updateInterface(with: items)
         }
     }
     
@@ -157,7 +157,6 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
             }
         }
     }
-    
 }
 
 extension Array where Element == TodayNotesCellViewState {

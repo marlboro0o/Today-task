@@ -68,7 +68,7 @@ extension TodayNotesViewController: TodayNotesDisplayLogic {
         view.layoutIfNeeded()
         tableView.reloadData()
         
-        reloadTabsCount()
+        setupTabsCount()
         changeTab(for: viewState.tabs.firstIndex { $0.type == currentType } ?? 0, viewState: viewState)
     }
     
@@ -90,25 +90,6 @@ extension TodayNotesViewController: TodayNotesDisplayLogic {
     func showError() {
         errorView.isHidden = false
     }
-    
-    @objc func didTapTab(_ sender: UITapGestureRecognizer) {
-        guard 
-            let index = sender.view?.tag,
-            let viewState = self.viewState
-        else {
-            assertionFailure("Всегда должен быть индекс и стэйт по тапу на табы")
-            return
-        }
-        presenter.changeTab(for: index, viewState: viewState)
-        
-    }
-    
-    @objc func tapNewTask() {
-        showAlertTask { [weak self] title, subtitle in
-            self?.presenter.createNewTask(title: title, subtitle: subtitle)
-        }
-    }
-    
 }
 
 // MARK: - UITableViewDataSource
@@ -130,7 +111,8 @@ extension TodayNotesViewController: UITableViewDataSource {
             assertionFailure("Всегда должен быть айтем на индексе")
             return UITableViewCell()
         }
-
+        
+        //Убираем выделение при тапе на ячейку
         cell.selectionStyle = .none
         cell.configure(with: model)
         
@@ -185,9 +167,9 @@ extension TodayNotesViewController {
         ])
     }
 
-    private func reloadTabsCount() {
+    private func setupTabsCount() {
         
-        guard let viewState = self.viewState else { return }
+        guard let viewState else { return }
         
         for (index, element) in viewState.tabs.enumerated() {
             tabsCountLabel[index].text = String(element.count)
@@ -203,7 +185,7 @@ extension TodayNotesViewController {
             stack.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTab)))
             
             if index == .zero {
-                let seporator = makeSeparatorTabView() // polosa
+                let seporator = makeSeparatorTabView()
                 tabStack.addArrangedSubview(seporator)
                 
                 NSLayoutConstraint.activate([
@@ -213,6 +195,17 @@ extension TodayNotesViewController {
             }
             tabsStack.append(stack)
         }
+    }
+    
+    @objc private func didTapTab(_ sender: UITapGestureRecognizer) {
+        guard
+            let index = sender.view?.tag,
+            let viewState = self.viewState
+        else {
+            assertionFailure("Всегда должен быть индекс и стэйт по тапу на табы")
+            return
+        }
+        presenter.changeTab(for: index, viewState: viewState)
     }
     
     private func makeTableView() -> UITableView {
@@ -260,6 +253,12 @@ extension TodayNotesViewController {
         return button
     }
     
+    @objc private func tapNewTask() {
+        showAlertTask { [weak presenter] title, subtitle in
+            presenter?.createNewTask(title: title, subtitle: subtitle)
+        }
+    }
+    
     private func makeTabStackView() -> UIStackView {
         
         let stack = UIStackView().autoLayout()
@@ -275,7 +274,6 @@ extension TodayNotesViewController {
         labelTitle.text = tab.title
         
         let labelCount = UILabel().autoLayout()
-//        labelCount.text = String(tab.count)
         labelCount.textColor = .white
         labelCount.textAlignment = .center
         labelCount.font = UIFont.systemFont(ofSize: 12)
@@ -377,8 +375,8 @@ extension TodayNotesViewController {
     }
     
     private func makeErrorView() -> UIView {
-        let view = TodayNotesViewNetworkError().autoLayout()
-        view.configure(presenter: presenter)
+        let view = TodayNotesViewError().autoLayout()
+        view.configure(controller: self)
         view.isHidden = true
         
         return view

@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-class TodayNotesViewNetworkError: UIView {
+class TodayNotesViewError: UIView {
     
-    var presenter: TodayNotesPresenting?
+    var controller: TodayNotesViewController?
     
-    func configure(presenter: TodayNotesPresenting) {
+    func configure(controller: TodayNotesViewController) {
         
-        self.presenter = presenter
+        self.controller = controller
         
         let viewError = UIView().autoLayout()
         viewError.backgroundColor = UIColor.white
@@ -52,6 +52,6 @@ class TodayNotesViewNetworkError: UIView {
     }
     
     @objc func tapTryAgain() {
-        presenter?.viewDidLoad()
+        controller?.setup()
     }
 }

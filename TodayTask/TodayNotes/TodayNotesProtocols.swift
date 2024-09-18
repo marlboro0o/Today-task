@@ -44,7 +44,7 @@ protocol TodayNotesEntityProtocol {
 }
 
 // Entity database
-protocol TodayNotesDataBaseEntityProtocol {
+protocol TodayNotesDataBaseStoring {
     func fetch(completion: @escaping ([TodayNotesItem]) -> Void)
     func save(for items: [TodayNotesItem], completion: @escaping () -> Void)
     func delete(for id: String, completion: @escaping () -> Void) 

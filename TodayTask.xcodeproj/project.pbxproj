@@ -24,8 +24,10 @@
 		77B70EFE2C8E1640009BA95E /* TodayNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70EFD2C8E1640009BA95E /* TodayNotesModel.swift */; };
 		77B70F002C8F6A26009BA95E /* TodayNotesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70EFF2C8F6A26009BA95E /* TodayNotesCell.swift */; };
 		77B70F0C2C96F203009BA95E /* NotesItem.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F0A2C96F203009BA95E /* NotesItem.xcdatamodeld */; };
-		77B70F132C96F386009BA95E /* DataBaseEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F122C96F386009BA95E /* DataBaseEntity.swift */; };
-		77B70F152C989E51009BA95E /* TodayNotesViewNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F142C989E51009BA95E /* TodayNotesViewNetworkError.swift */; };
+		77B70F132C96F386009BA95E /* DataBaseStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F122C96F386009BA95E /* DataBaseStorage.swift */; };
+		77B70F152C989E51009BA95E /* TodayNotesViewError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F142C989E51009BA95E /* TodayNotesViewError.swift */; };
+		77B70F182C9B14A1009BA95E /* TodayNotesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F172C9B14A1009BA95E /* TodayNotesViewState.swift */; };
+		77B70F1A2C9B14EB009BA95E /* TodayNotesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B70F192C9B14EB009BA95E /* TodayNotesViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,8 +68,10 @@
 		77B70EFD2C8E1640009BA95E /* TodayNotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNotesModel.swift; sourceTree = "<group>"; };
 		77B70EFF2C8F6A26009BA95E /* TodayNotesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNotesCell.swift; sourceTree = "<group>"; };
 		77B70F0B2C96F203009BA95E /* CoreDataBase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataBase.xcdatamodel; sourceTree = "<group>"; };
-		77B70F122C96F386009BA95E /* DataBaseEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseEntity.swift; sourceTree = "<group>"; };
-		77B70F142C989E51009BA95E /* TodayNotesViewNetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNotesViewNetworkError.swift; sourceTree = "<group>"; };
+		77B70F122C96F386009BA95E /* DataBaseStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseStorage.swift; sourceTree = "<group>"; };
+		77B70F142C989E51009BA95E /* TodayNotesViewError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNotesViewError.swift; sourceTree = "<group>"; };
+		77B70F172C9B14A1009BA95E /* TodayNotesViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNotesViewState.swift; sourceTree = "<group>"; };
+		77B70F192C9B14EB009BA95E /* TodayNotesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNotesViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,8 +169,8 @@
 				77B70EF72C8E1007009BA95E /* TodayNotesInteractor.swift */,
 				77B70EF92C8E1020009BA95E /* TodayNotesEntity.swift */,
 				77B70EFF2C8F6A26009BA95E /* TodayNotesCell.swift */,
-				77B70EFD2C8E1640009BA95E /* TodayNotesModel.swift */,
-				77B70F142C989E51009BA95E /* TodayNotesViewNetworkError.swift */,
+				77B70F142C989E51009BA95E /* TodayNotesViewError.swift */,
+				77B70F162C9B147C009BA95E /* Model */,
 			);
 			path = TodayNotes;
 			sourceTree = "<group>";
@@ -175,9 +179,19 @@
 			isa = PBXGroup;
 			children = (
 				77B70F0A2C96F203009BA95E /* NotesItem.xcdatamodeld */,
-				77B70F122C96F386009BA95E /* DataBaseEntity.swift */,
+				77B70F122C96F386009BA95E /* DataBaseStorage.swift */,
 			);
 			path = DataBase;
+			sourceTree = "<group>";
+		};
+		77B70F162C9B147C009BA95E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				77B70F172C9B14A1009BA95E /* TodayNotesViewState.swift */,
+				77B70F192C9B14EB009BA95E /* TodayNotesViewModel.swift */,
+				77B70EFD2C8E1640009BA95E /* TodayNotesModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -318,13 +332,15 @@
 			files = (
 				77B70EFC2C8E1379009BA95E /* TodayNotesAssemler.swift in Sources */,
 				77B70F002C8F6A26009BA95E /* TodayNotesCell.swift in Sources */,
-				77B70F152C989E51009BA95E /* TodayNotesViewNetworkError.swift in Sources */,
+				77B70F152C989E51009BA95E /* TodayNotesViewError.swift in Sources */,
 				77B70EF62C8E0FF8009BA95E /* TodayNotesPresenter.swift in Sources */,
 				77B70F0C2C96F203009BA95E /* NotesItem.xcdatamodeld in Sources */,
-				77B70F132C96F386009BA95E /* DataBaseEntity.swift in Sources */,
+				77B70F132C96F386009BA95E /* DataBaseStorage.swift in Sources */,
 				77B70EF22C8E0FE7009BA95E /* TodayNotesProtocols.swift in Sources */,
 				77B70EF42C8E0FF0009BA95E /* TodayNotesViewController.swift in Sources */,
+				77B70F182C9B14A1009BA95E /* TodayNotesViewState.swift in Sources */,
 				77B70EFE2C8E1640009BA95E /* TodayNotesModel.swift in Sources */,
+				77B70F1A2C9B14EB009BA95E /* TodayNotesViewModel.swift in Sources */,
 				77B70EB12C8B084E009BA95E /* AppDelegate.swift in Sources */,
 				77B70EFA2C8E1020009BA95E /* TodayNotesEntity.swift in Sources */,
 				77B70EF82C8E1007009BA95E /* TodayNotesInteractor.swift in Sources */,
