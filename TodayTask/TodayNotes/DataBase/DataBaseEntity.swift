@@ -65,6 +65,12 @@ final class DataBaseEntity: TodayNotesDataBaseEntityProtocol {
                         item.subtitle = element.subtitle
                         item.creationDate = element.creationDate
                         item.isCompleted = element.isCompleted
+                        
+                        do {
+                            try self.backgroundContext.save()
+                        } catch {
+                            assertionFailure(error.localizedDescription)
+                        }
                     } else {
                         result[0].title = element.title
                         result[0].subtitle = element.subtitle
