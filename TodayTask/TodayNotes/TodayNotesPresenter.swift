@@ -45,7 +45,6 @@ final class TodayNotesPresenter: TodayNotesPresenting {
                 self.view?.changeTab(for: index, viewState: newViewState)
             }
         }
-        
     }
     
     func createNewTask(title: String, subtitle: String) {
@@ -104,7 +103,7 @@ final class TodayNotesPresenter: TodayNotesPresenting {
             TodayNotesCellViewState(
                 id: element.id,
                 title: element.title,
-                subtitle: element.subtitle,
+                subtitle: element.subtitle == "" ? "\(String(element.title.prefix(15)))..." : element.subtitle,
                 createdDate: element.creationDate,
                 createdDateDay: formatterCreateDateDay(for: element.creationDate),
                 createdDateTime: formatterCreateDateTime(for: element.creationDate),
