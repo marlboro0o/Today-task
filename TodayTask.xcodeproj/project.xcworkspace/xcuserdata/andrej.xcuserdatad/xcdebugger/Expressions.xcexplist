@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "TodayNotesCustomCell.prepareForReuse():TodayNotesCustomCell.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "titleLabel.attributedText">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TodayNotesInteractor.viewDidLoad():TodayNotesInteractor.swift">
+      </ContextState>
+      <ContextState
+         contextName = "TaskViewController.tapTypeTask(_:):TaskViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "TaskViewController.configure():TaskViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "TodayNotesViewController.tapTab(_:):TodayNotesViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "TodayNotesCustomCell.configure(with:):TodayNotesCustomCell.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "todo.completed">
+            </PersistentString>
+            <PersistentString
+               value = "titleLabel.attributedText">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TodayNotesPresenter.configure(with:):TodayNotesPresenter.swift">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
