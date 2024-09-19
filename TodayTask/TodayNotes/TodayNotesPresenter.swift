@@ -39,7 +39,7 @@ final class TodayNotesPresenter: TodayNotesPresenting {
             guard let currentViewState = self.viewState else { return }
 
             let items = currentViewState.items.filterItemsByType(type: currentType)
-            let newViewState = self.makeViewState(viewState: viewState, items: items)
+            let newViewState = self.makeViewState(viewState: viewState, items: items, typeTask: currentType)
             
             DispatchQueue.main.async {
                 self.view?.changeTab(for: index, viewState: newViewState)
@@ -115,15 +115,21 @@ final class TodayNotesPresenter: TodayNotesPresenting {
         }
     }
     
-    private func makeViewState(viewState: TodayNotesViewState? = nil, items: [TodayNotesCellViewState]) -> TodayNotesViewState {
+    private func makeViewState(viewState: TodayNotesViewState? = nil, items: [TodayNotesCellViewState], typeTask: TypeTask? = nil) -> TodayNotesViewState {
        
         if let viewState {
+            
+            var currentType = viewState.currentType
+            if let typeTask {
+                currentType = typeTask
+            }
+            
             return TodayNotesViewState(
                 headerTitle: viewState.headerTitle,
                 headerSubtitle: viewState.headerSubtitle,
                 headerButtonTitle: viewState.headerButtonTitle,
                 tabs: makeTabs(for: items),
-                currentType: viewState.currentType,
+                currentType: currentType,
                 items: items
             )
         } else {
