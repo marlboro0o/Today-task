@@ -1,5 +1,5 @@
 //
-//  TodayNotesViewNetworkError.swift
+//  TodayNotesErrorView.swift
 //  TodayTask
 //
 //  Created by Андрей on 16.09.2024.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class TodayNotesViewError: UIView {
+class TodayNotesErrorView: UIView {
     
     var controller: TodayNotesViewController?
     

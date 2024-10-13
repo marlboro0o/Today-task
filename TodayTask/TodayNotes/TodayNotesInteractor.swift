@@ -23,6 +23,7 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
     func viewDidLoad() {
         if UserDefaults.standard.bool(forKey: "networkDataLoaded") {
             storageFetch()
+            UserDefaults.standard.setValue(true, forKey: "networkDataLoaded")
         } else {
             networkFetch()
         }

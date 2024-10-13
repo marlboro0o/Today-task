@@ -42,7 +42,7 @@ final class TodayNotesPresenter: TodayNotesPresenting {
             let newViewState = self.makeViewState(viewState: viewState, items: items, typeTask: currentType)
             
             DispatchQueue.main.async {
-                self.view?.changeTab(for: index, viewState: newViewState)
+                self.view?.changeTabOutput(for: index, viewState: newViewState)
             }
         }
     }

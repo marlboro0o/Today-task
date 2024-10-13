@@ -7,7 +7,7 @@
 
 import Foundation
 import CoreData
-// storage
+
 final class DataBaseStorage: TodayNotesDataBaseStoring {
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "NotesItem")

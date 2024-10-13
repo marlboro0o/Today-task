@@ -12,19 +12,13 @@ final class TodayNotesViewController: UIViewController {
     
     private let presenter: TodayNotesPresenting
 
-    private var tabsStack: [UIStackView] = []
-    private var tabsCountLabel: [UILabel] = []
-    
-    private lazy var headerStack = makeHeaderStack()
-    private lazy var headerTitle = makeHeaderTitle()
-    private lazy var headerSubtitle = makeHeaderSubtitle()
-    private lazy var headerButton = makeHeaderButton()
-    private lazy var tabStack = makeTabStackView()
-    private lazy var tableView = makeTableView()
-    private lazy var errorView = makeErrorView()
-    
     private var viewState: TodayNotesViewState?
     private var currentType: TypeTask = .all
+    
+    private lazy var headerView = makeHeaderView()
+    private lazy var tabsView = makeTabsView()
+    private lazy var tableView = makeTableView()
+    private lazy var errorView = makeErrorView()
     
     init(presenter: TodayNotesPresenting) {
         self.presenter = presenter
@@ -51,39 +45,33 @@ extension TodayNotesViewController: TodayNotesDisplayLogic {
     
     func configure(with viewState: TodayNotesViewState) {
         errorView.isHidden = true
-        configureTabs(for: viewState.tabs)
+        tabsView.configureTabs(for: viewState.tabs)
         updateInterface(with: viewState)
-        UserDefaults.standard.setValue(true, forKey: "networkDataLoaded")
     }
     
     func updateInterface(with viewState: TodayNotesViewState) {
         self.viewState = viewState
         
-        headerTitle.text = viewState.headerTitle
-        headerSubtitle.text = viewState.headerSubtitle
-        headerButton.setTitle(viewState.headerButtonTitle, for: .normal)
+        headerView.title.text = viewState.headerTitle
+        headerView.subtitle.text = viewState.headerSubtitle
+        headerView.button.setTitle(viewState.headerButtonTitle, for: .normal)
         currentType = viewState.currentType
         
         view.setNeedsLayout()
         view.layoutIfNeeded()
         tableView.reloadData()
         
-        setupTabsCount()
-        changeTab(for: viewState.tabs.firstIndex { $0.type == currentType } ?? 0, viewState: viewState)
+        tabsView.updateTabs(for: viewState.tabs.firstIndex { $0.type == currentType } ?? 0, tabs: viewState.tabs)
+ }
+    
+    func changeTabInput(for index: Int) {
+        guard let viewState else { return }
+        presenter.changeTab(for: index, viewState: viewState)
     }
     
-    func changeTab(for index: Int, viewState: TodayNotesViewState) {
+    func changeTabOutput(for index: Int, viewState: TodayNotesViewState) {
         self.viewState = viewState
-        
-        setDefaultSettingsTab()
-        
-        guard let firstLabel = tabsStack[index].subviews.first as? UILabel else { return }
-        let secondLabel = tabsCountLabel[index]
-        
-        firstLabel.font = UIFont.boldSystemFont(ofSize: 19)
-        firstLabel.textColor = .systemBlue
-        secondLabel.backgroundColor = .systemBlue
-        
+        tabsView.selectedTab(for: index)
         tableView.reloadData()
     }
     
@@ -131,28 +119,27 @@ extension TodayNotesViewController: UITableViewDelegate {
 extension TodayNotesViewController {
     private func setupUI() {
         view.backgroundColor = .systemGray6
-        view.addSubview(headerStack)
+        headerView.button.addTarget(self, action: #selector(tapNewTask), for: .touchUpInside)
+        
+        view.addSubview(headerView)
         NSLayoutConstraint.activate([
-            headerStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            headerStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20)
+            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            headerView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            headerView.heightAnchor.constraint(equalToConstant: 60)
         ])
         
-        view.addSubview(headerButton)
+        view.addSubview(tabsView)
         NSLayoutConstraint.activate([
-            headerButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            headerButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            headerButton.bottomAnchor.constraint(equalTo: headerStack.bottomAnchor)
-        ])
-        
-        view.addSubview(tabStack)
-        NSLayoutConstraint.activate([
-            tabStack.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 40),
-            tabStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20)
+            tabsView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 40),
+            tabsView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            tabsView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tabsView.heightAnchor.constraint(equalToConstant: 20)
         ])
         
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: tabStack.bottomAnchor, constant: 40),
+            tableView.topAnchor.constraint(equalTo: tabsView.bottomAnchor, constant: 40),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -167,154 +154,29 @@ extension TodayNotesViewController {
         ])
     }
 
-    private func setupTabsCount() {
-        
-        guard let viewState else { return }
-        
-        for (index, element) in viewState.tabs.enumerated() {
-            tabsCountLabel[index].text = String(element.count)
-        }
+    private func makeHeaderView() -> TodayNotesHeaderView {
+        let view = TodayNotesHeaderView().autoLayout()
+        view.configure()
+        return view
     }
     
-    private func configureTabs(for tabs: [Tab]) {
-        
-        for (index, tab) in tabs.enumerated() {
-            let stack = makeSubTabStackView(tab: tab)
-            stack.tag = index
-            tabStack.addArrangedSubview(stack)
-            stack.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTab)))
-            
-            if index == .zero {
-                let seporator = makeSeparatorTabView()
-                tabStack.addArrangedSubview(seporator)
-                
-                NSLayoutConstraint.activate([
-                    seporator.widthAnchor.constraint(equalToConstant: 2),
-                    seporator.heightAnchor.constraint(equalToConstant: 20)
-                ])
-            }
-            tabsStack.append(stack)
-        }
+    private func makeTabsView() -> TodayNotesTabsView {
+        let view = TodayNotesTabsView().autoLayout()
+        view.configure(self)
+        return view
     }
     
-    @objc private func didTapTab(_ sender: UITapGestureRecognizer) {
-        guard
-            let index = sender.view?.tag,
-            let viewState = self.viewState
-        else {
-            assertionFailure("Всегда должен быть индекс и стэйт по тапу на табы")
-            return
-        }
-        presenter.changeTab(for: index, viewState: viewState)
-    }
-    
-    private func makeTableView() -> UITableView {
-        let tableView = UITableView(frame: .zero, style: .plain).autoLayout()
-        tableView.separatorStyle = .none
-        
-        
-        tableView.register(TodayNotesCell.self, forCellReuseIdentifier: "NoteCell")
-        
+    private func makeTableView() -> TodayNotesTableView {
+        let tableView = TodayNotesTableView().autoLayout()
+        tableView.configure()
         tableView.dataSource = self
         tableView.delegate = self
-        
-        tableView.backgroundColor = .clear
         return tableView
-    }
-    
-    private func makeHeaderStack() -> UIStackView {
-        let stack = UIStackView().autoLayout()
-        stack.axis = .vertical
-        stack.spacing = 3
-        [headerTitle, headerSubtitle].forEach(stack.addArrangedSubview(_:))
-        return stack
-    }
-    
-    private func makeHeaderTitle() -> UILabel {
-        let label = UILabel().autoLayout()
-        label.font = UIFont.boldSystemFont(ofSize: 25)
-        return label
-    }
-    
-    private func makeHeaderSubtitle() -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .gray
-        return label
-    }
-    
-    private func makeHeaderButton() -> UIButton {
-        let button = UIButton(configuration: .tinted()).autoLayout()
-        button.layer.cornerRadius = 15
-        button.layer.masksToBounds = true
-        
-        button.addTarget(self, action: #selector(tapNewTask), for: .touchUpInside)
-        
-        return button
     }
     
     @objc private func tapNewTask() {
         showAlertTask { [weak presenter] title, subtitle in
             presenter?.createNewTask(title: title, subtitle: subtitle)
-        }
-    }
-    
-    private func makeTabStackView() -> UIStackView {
-        
-        let stack = UIStackView().autoLayout()
-        stack.spacing = 20
-        stack.axis = .horizontal
-        
-        return stack
-    }
-    
-    private func makeSubTabStackView(tab: Tab) -> UIStackView {
-        
-        let labelTitle = UILabel()
-        labelTitle.text = tab.title
-        
-        let labelCount = UILabel().autoLayout()
-        labelCount.textColor = .white
-        labelCount.textAlignment = .center
-        labelCount.font = UIFont.systemFont(ofSize: 12)
-        labelCount.layer.cornerRadius = 10
-        labelCount.layer.masksToBounds = true
-       
-        tabsCountLabel.append(labelCount)
-        
-        let stack = UIStackView(arrangedSubviews: [labelTitle, labelCount]).autoLayout()
-        stack.spacing = 5
-        stack.axis = .horizontal
-        
-        NSLayoutConstraint.activate([
-            labelTitle.heightAnchor.constraint(equalToConstant: 20),
-            labelCount.widthAnchor.constraint(equalToConstant: 30)
-        ])
-        
-        return stack
-    }
-    
-    private func makeSeparatorTabView() -> UIView {
-        let view = UIView().autoLayout()
-        view.backgroundColor = .systemGray4
-        return view
-    }
-    
-    private func setDefaultSettingsTab() {
-        
-        for (index, element) in tabsStack.enumerated() {
-            guard 
-                let titleView = element.subviews.first as? UILabel
-            else {
-                return
-            }
-            
-            titleView.font = UIFont.systemFont(ofSize: 19)
-            titleView.textColor = .gray
-            
-            let countView = tabsCountLabel[index]
-            countView.backgroundColor = .systemGray4
-            
         }
     }
     
@@ -375,7 +237,7 @@ extension TodayNotesViewController {
     }
     
     private func makeErrorView() -> UIView {
-        let view = TodayNotesViewError().autoLayout()
+        let view = TodayNotesErrorView().autoLayout()
         view.configure(controller: self)
         view.isHidden = true
         
