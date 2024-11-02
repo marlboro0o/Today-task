@@ -8,6 +8,7 @@
 import UIKit
 
 final class TodayNotesCell: UITableViewCell {
+    
     private let titleStack = UIStackView().autoLayout()
     private let createdDateStack = UIStackView().autoLayout()
     private var viewState: TodayNotesCellViewState?
@@ -49,13 +50,12 @@ final class TodayNotesCell: UITableViewCell {
             attribute[.strikethroughStyle] = NSUnderlineStyle.single.rawValue
             // Установка картинки
             completedImageView.image = UIImage(named: "checkmark")?.withRenderingMode(.alwaysTemplate)
-            completedView.backgroundColor = .blue
+            completedView.backgroundColor = .systemBlue
         } else {
             attribute[.strikethroughStyle] = NSUnderlineStyle(rawValue: 0)
         }
         
         titleLabel.attributedText = NSAttributedString(string: viewState.title, attributes: attribute)
-        
         subTitleLabel.text = viewState.subtitle
         createdDateDayLabel.text = viewState.createdDateDay
         createdDateTimeLabel.text = viewState.createdDateTime

@@ -23,7 +23,6 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
     func viewDidLoad() {
         if UserDefaults.standard.bool(forKey: "networkDataLoaded") {
             storageFetch()
-            UserDefaults.standard.setValue(true, forKey: "networkDataLoaded")
         } else {
             networkFetch()
         }
@@ -138,7 +137,7 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
                     let result = try? result.get(),
                     !result.todos.isEmpty
                 else {
-                    self?.presenter?.showError()
+                    self?.presenter?.showError(title: "Network error", titleButton: "try again")
                     return
                 }
                 let items = result.todos.map {
@@ -154,22 +153,11 @@ final class TodayNotesInteractor: TodayNotesBusinessLogic {
                     let viewModel = TodayNotesViewModel(items: items)
                     self?.viewModel = viewModel
                     self?.presenter?.configure(with: viewModel)
+                    
+                    UserDefaults.standard.setValue(true, forKey: "networkDataLoaded")
                 }
             }
         }
     }
 }
 
-extension Array where Element == TodayNotesCellViewState {
-    func mapToTodoList() -> [TodayNotesItem] {
-        map {
-            TodayNotesItem(
-                id: $0.id,
-                title: $0.title,
-                subtitle: $0.subtitle,
-                creationDate: $0.createdDate,
-                isCompleted: $0.isCompleted
-            )
-        }
-    }
-}

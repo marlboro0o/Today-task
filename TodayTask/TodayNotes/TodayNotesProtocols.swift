@@ -10,9 +10,8 @@
 protocol TodayNotesDisplayLogic: AnyObject {
     func configure(with viewState: TodayNotesViewState)
     func updateInterface(with viewState: TodayNotesViewState)
-    func changeTabInput(for index: Int)
     func changeTabOutput(for index: Int, viewState: TodayNotesViewState)
-    func showError()
+    func showError(state: TodayNotesErrorViewState)
 }
 
 // Presenter
@@ -27,7 +26,7 @@ protocol TodayNotesPresenting: AnyObject {
     // interactor methods
     func configure(with viewModel: TodayNotesViewModel)
     func updateInterface(with items: [TodayNotesItem])
-    func showError()
+    func showError(title: String, titleButton: String)
 }
 
 // Interactor

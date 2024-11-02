@@ -79,8 +79,10 @@ final class TodayNotesPresenter: TodayNotesPresenting {
         self.view?.updateInterface(with: newViewState)
     }
     
-    func showError() {
-        view?.showError()
+    func showError(title: String, titleButton: String) {
+        view?.showError(state: TodayNotesErrorViewState(title: title, titleButton: titleButton) { [weak self] in
+            self?.viewDidLoad()
+        } )
     }
     
     //MARK: - Private methods

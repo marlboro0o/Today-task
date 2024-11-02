@@ -11,13 +11,13 @@ enum TodayNotesAssemly {
     static func createViewController() -> UIViewController {
         let interactor = TodayNotesInteractor(entity: TodayNotesEntity())
         let presenter = TodayNotesPresenter(interactor: interactor)
-        let view = TodayNotesViewController(presenter: presenter)
+        let viewController = TodayNotesViewController(presenter: presenter)
         
         interactor.presenter = presenter
-        presenter.view = view
+        presenter.view = viewController
         
-        view.setup()
+        viewController.setup()
         
-        return view
+        return viewController
     }
 }

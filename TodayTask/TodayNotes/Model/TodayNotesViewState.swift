@@ -37,6 +37,12 @@ struct TodayNotesCellViewState: Equatable, CustomStringConvertible {
     }
 }
 
+struct TodayNotesErrorViewState {
+    let title: String
+    let titleButton: String
+    let action: (() -> Void)
+}
+
 struct Tab {
     let title: String
     let count: Int

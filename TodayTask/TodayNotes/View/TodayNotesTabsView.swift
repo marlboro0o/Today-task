@@ -8,22 +8,12 @@
 import Foundation
 import UIKit
 
-class TodayNotesTabsView: UIView {
+final class TodayNotesTabsView: UIView {
    
-    var controller: TodayNotesViewController?
+    private var actionTapTab: ((Int) -> Void)?
     private var tabsStack: [UIStackView] = []
     private var tabsCountLabel: [UILabel] = []
     private lazy var tabStack = makeTabStackView()
-    
-    func configure(_ controller: TodayNotesViewController) {
-        self.controller = controller
-        
-        addSubview(tabStack)
-        NSLayoutConstraint.activate([
-            tabStack.topAnchor.constraint(equalTo: topAnchor),
-            tabStack.leftAnchor.constraint(equalTo: leftAnchor)
-        ])
-    }
     
     func configureTabs(for tabs: [Tab]) {
         for (index, tab) in tabs.enumerated() {
@@ -69,8 +59,26 @@ class TodayNotesTabsView: UIView {
     }
 }
 
+//MARK: - Initialization
+extension TodayNotesTabsView {
+    convenience init(actionTapTab: ((Int) -> Void)?) {
+        self.init()
+        self.actionTapTab = actionTapTab
+        setupUI()
+    }
+}
+
 //MARK: - Private methods
 extension TodayNotesTabsView {
+    
+    private func setupUI() {
+        addSubview(tabStack)
+        NSLayoutConstraint.activate([
+            tabStack.topAnchor.constraint(equalTo: topAnchor),
+            tabStack.leftAnchor.constraint(equalTo: leftAnchor)
+        ])
+    }
+    
     private func makeTabStackView() -> UIStackView {
         let stack = UIStackView().autoLayout()
         stack.spacing = 20
@@ -92,7 +100,8 @@ extension TodayNotesTabsView {
             assertionFailure("Всегда должен быть индекс и стэйт по тапу на табы")
             return
         }
-        controller?.changeTabInput(for: index)
+       
+        actionTapTab?(index)
     }
     
     private func makeSubTabStackView(tab: Tab) -> UIStackView {

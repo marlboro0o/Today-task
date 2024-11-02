@@ -13,7 +13,7 @@ final class DataBaseStorage: TodayNotesDataBaseStoring {
         let container = NSPersistentContainer(name: "NotesItem")
         container.loadPersistentStores { store, error in
             if let error = error as? NSError {
-                assertionFailure("123")
+                assertionFailure("Ошибка базы данных")
             }
         }
         return container

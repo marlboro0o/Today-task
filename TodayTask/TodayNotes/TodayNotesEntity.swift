@@ -20,15 +20,15 @@ final class TodayNotesEntity: TodayNotesEntityProtocol {
             }
             
             DispatchQueue.global().async {
-                    guard let model = try? JSONDecoder().decode(TodayNotesModel.self, from: data)
-                    else {
-                        completion(.failure(NSError()))
-                        return
-                    }
-                    
-                    DispatchQueue.main.async {
-                        completion(.success(model))
-                    }
+                guard let model = try? JSONDecoder().decode(TodayNotesModel.self, from: data)
+                else {
+                    completion(.failure(NSError()))
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    completion(.success(model))
+                }
             }
         }
     }

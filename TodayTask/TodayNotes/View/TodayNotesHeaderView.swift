@@ -8,16 +8,37 @@
 import Foundation
 import UIKit
 
-class TodayNotesHeaderView: UIView {
+final class TodayNotesHeaderView: UIView {
    
-    var controller: TodayNotesViewController?
-    lazy var headerStack = makeHeaderStack()
-    lazy var title = makeHeaderTitle()
-    lazy var subtitle = makeHeaderSubtitle()
-    lazy var button = makeHeaderButton()
+    private var actionNewTask: (() -> Void)?
+    private lazy var headerStack = makeHeaderStack()
+    private lazy var title = makeHeaderTitle()
+    private lazy var subtitle = makeHeaderSubtitle()
+    private lazy var button = makeHeaderButton()
     
-    func configure() {
+    func configure(with viewState: TodayNotesViewState) {
+        title.text = viewState.headerTitle
+        subtitle.text = viewState.headerSubtitle
+        button.setTitle(viewState.headerButtonTitle, for: .normal)
+    }
+}
+
+// MARK: - Initialization
+extension TodayNotesHeaderView {
+    convenience init(actionNewTask: (() -> Void)?) {
+        self.init()
+        self.actionNewTask = actionNewTask
+        setupUI()
+    }
+}
+
+// MARK: - Private methods
+extension TodayNotesHeaderView {
+    
+    private func setupUI() {
         backgroundColor = .systemGray6
+        button.addTarget(self, action: #selector(tapNewTask), for: .touchUpInside)
+        
         addSubview(headerStack)
         NSLayoutConstraint.activate([
             headerStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -31,10 +52,7 @@ class TodayNotesHeaderView: UIView {
             button.bottomAnchor.constraint(equalTo: headerStack.bottomAnchor)
         ])
     }
-}
-
-// MARK: - Private methods
-extension TodayNotesHeaderView {
+    
     private func makeHeaderStack() -> UIStackView {
         let stack = UIStackView().autoLayout()
         stack.axis = .vertical
@@ -64,4 +82,7 @@ extension TodayNotesHeaderView {
         return button
     }
 
+    @objc private func tapNewTask() {
+        actionNewTask?()
+    }
 }

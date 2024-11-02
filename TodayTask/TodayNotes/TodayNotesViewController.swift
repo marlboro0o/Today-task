@@ -11,10 +11,8 @@ import UIKit
 final class TodayNotesViewController: UIViewController {
     
     private let presenter: TodayNotesPresenting
-
     private var viewState: TodayNotesViewState?
     private var currentType: TypeTask = .all
-    
     private lazy var headerView = makeHeaderView()
     private lazy var tabsView = makeTabsView()
     private lazy var tableView = makeTableView()
@@ -52,9 +50,7 @@ extension TodayNotesViewController: TodayNotesDisplayLogic {
     func updateInterface(with viewState: TodayNotesViewState) {
         self.viewState = viewState
         
-        headerView.title.text = viewState.headerTitle
-        headerView.subtitle.text = viewState.headerSubtitle
-        headerView.button.setTitle(viewState.headerButtonTitle, for: .normal)
+        headerView.configure(with: viewState)
         currentType = viewState.currentType
         
         view.setNeedsLayout()
@@ -62,11 +58,6 @@ extension TodayNotesViewController: TodayNotesDisplayLogic {
         tableView.reloadData()
         
         tabsView.updateTabs(for: viewState.tabs.firstIndex { $0.type == currentType } ?? 0, tabs: viewState.tabs)
- }
-    
-    func changeTabInput(for index: Int) {
-        guard let viewState else { return }
-        presenter.changeTab(for: index, viewState: viewState)
     }
     
     func changeTabOutput(for index: Int, viewState: TodayNotesViewState) {
@@ -75,7 +66,8 @@ extension TodayNotesViewController: TodayNotesDisplayLogic {
         tableView.reloadData()
     }
     
-    func showError() {
+    func showError(state: TodayNotesErrorViewState) {
+        errorView.configure(state: state)
         errorView.isHidden = false
     }
 }
@@ -119,7 +111,7 @@ extension TodayNotesViewController: UITableViewDelegate {
 extension TodayNotesViewController {
     private func setupUI() {
         view.backgroundColor = .systemGray6
-        headerView.button.addTarget(self, action: #selector(tapNewTask), for: .touchUpInside)
+        //headerView.button.addTarget(self, action: #selector(tapNewTask), for: .touchUpInside)
         
         view.addSubview(headerView)
         NSLayoutConstraint.activate([
@@ -155,14 +147,20 @@ extension TodayNotesViewController {
     }
 
     private func makeHeaderView() -> TodayNotesHeaderView {
-        let view = TodayNotesHeaderView().autoLayout()
-        view.configure()
+        let actionNewTask: (() -> Void)? = { [weak self] in
+            self?.tapNewTask()
+        }
+        
+        let view = TodayNotesHeaderView(actionNewTask: actionNewTask).autoLayout()
         return view
     }
     
     private func makeTabsView() -> TodayNotesTabsView {
-        let view = TodayNotesTabsView().autoLayout()
-        view.configure(self)
+        let actionTapTab: ((Int) -> Void)? = { [weak self] index in
+            self?.changeTabInput(for: index)
+        }
+        
+        let view = TodayNotesTabsView(actionTapTab: actionTapTab).autoLayout()
         return view
     }
     
@@ -174,10 +172,15 @@ extension TodayNotesViewController {
         return tableView
     }
     
-    @objc private func tapNewTask() {
+    private func tapNewTask() {
         showAlertTask { [weak presenter] title, subtitle in
             presenter?.createNewTask(title: title, subtitle: subtitle)
         }
+    }
+    
+    private func changeTabInput(for index: Int) {
+        guard let viewState else { return }
+        presenter.changeTab(for: index, viewState: viewState)
     }
     
     private func makeActionConfiguration(indexPath: IndexPath) -> UISwipeActionsConfiguration {
@@ -236,9 +239,9 @@ extension TodayNotesViewController {
         present(alert, animated: true)
     }
     
-    private func makeErrorView() -> UIView {
-        let view = TodayNotesErrorView().autoLayout()
-        view.configure(controller: self)
+    private func makeErrorView() -> TodayNotesErrorView {
+        
+        let view = TodayNotesErrorView(state: nil).autoLayout()
         view.isHidden = true
         
         return view

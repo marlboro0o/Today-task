@@ -8,26 +8,36 @@
 import Foundation
 import UIKit
 
-class TodayNotesErrorView: UIView {
+final class TodayNotesErrorView: UIView {
     
-    var controller: TodayNotesViewController?
+    private var state: TodayNotesErrorViewState?
+    private var action: (() -> Void)?
+    private lazy var label = makeLabel()
+    private lazy var button = makeButton()
     
-    func configure(controller: TodayNotesViewController) {
+    func configure(state: TodayNotesErrorViewState) {
         
-        self.controller = controller
-        
+        self.state = state
+        label.text = state.title
+        button.setTitle(state.titleButton, for: .normal)
+    }
+    
+}
+
+//MARK: - Initialization
+extension TodayNotesErrorView {
+    convenience init(state: TodayNotesErrorViewState?) {
+        self.init()
+        setupUI()
+    }
+}
+
+//MARK: - Private methods
+extension TodayNotesErrorView {
+    private func setupUI() {
         let viewError = UIView().autoLayout()
         viewError.backgroundColor = UIColor.white
         addSubview(viewError)
-        
-        let label = UILabel().autoLayout()
-        label.text = "Network error"
-        label.font = UIFont.boldSystemFont(ofSize: 19)
-        label.textAlignment = .center
-        
-        let button = UIButton(configuration: .plain()).autoLayout()
-        button.setTitle("try again", for: .normal)
-        button.addTarget(self, action: #selector(tapTryAgain), for: .touchUpInside)
         
         let stack = UIStackView(arrangedSubviews: [label, button]).autoLayout()
         stack.axis = .vertical
@@ -51,7 +61,21 @@ class TodayNotesErrorView: UIView {
         ])
     }
     
-    @objc func tapTryAgain() {
-        controller?.setup()
+    private func makeLabel() -> UILabel {
+        let label = UILabel().autoLayout()
+        label.font = UIFont.boldSystemFont(ofSize: 19)
+        label.textAlignment = .center
+        return label
+    }
+    
+    private func makeButton() -> UIButton {
+        let button = UIButton(configuration: .plain()).autoLayout()
+        button.addTarget(self, action: #selector(tapTryAgain), for: .touchUpInside)
+        return button
+    }
+    
+    @objc 
+    private func tapTryAgain() {
+        state?.action()
     }
 }
